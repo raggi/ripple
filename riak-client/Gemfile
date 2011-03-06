@@ -8,6 +8,7 @@ gem 'rack', '>=1.0'
 gem 'rake'
 gem 'bundler'
 gem 'excon', "~>0.3.4"
+gem 'net-http-persistent'
 
 if defined? JRUBY_VERSION
   gem 'json'

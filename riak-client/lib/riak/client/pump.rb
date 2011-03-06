@@ -12,33 +12,25 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 require 'riak'
-begin
-  require 'fiber'
-rescue LoadError
-  require 'riak/util/fiber1.8'
-end
 
 module Riak
   class Client
     class Pump
-      def initialize(block, result_block=nil)
-        @result_block = result_block
-        @fiber = Fiber.new do
-          loop do
-            block.call *Fiber.yield
-          end
-        end
-        @fiber.resume
+      def initialize(block, result_block = nil)
+        @rblok = result_block
+        @block = block
       end
 
-      def call(*input)
-        @fiber.resume *input
-        @result_block.call(*input) if @result_block
+      def call(*a)
+        @block.call(*a)
+        @rblok.call(*a) if @rblok
       end
 
       def to_proc
-        lambda {|*args| call(*args) }
+        method(:call).to_proc
       end
     end
   end
 end
+
+
